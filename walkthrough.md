@@ -94,9 +94,9 @@ Based on the results we can confirm that there is a web server.
 
 Let's navigate to the server in our browser and check out some of the hits that we got on gobuster.
 
-<6. visting the web server >
+<img width="1277" height="257" alt="6  visiting the web server" src="https://github.com/user-attachments/assets/66f93d94-ecbd-4535-a2a3-8d0db870e01b" />
 
-<7. assets page>
+<img width="502" height="262" alt="7  visiting assets page" src="https://github.com/user-attachments/assets/4d347fbb-9b81-42e9-a92b-284724906c05" />
 
 Let's try to refine our search and specfically look for php now, we'll also use a larger word dictionary. 
 
@@ -146,7 +146,7 @@ http://<server>/dir
 
 No luck.
 
-< 9. accessing dir>
+<img width="494" height="123" alt="9  accessing dir - pass txt " src="https://github.com/user-attachments/assets/6617aef5-a21c-43c3-bb84-55d0baed208d" />
 
 Let's pivot and look at:
 
@@ -155,11 +155,11 @@ http://<server>/login.php
 ```
 The landing page shows us a log in screen.
 
-<10. login image>
+<img width="1276" height="501" alt="10  login php" src="https://github.com/user-attachments/assets/706baee7-57c0-410a-a850-aa0871ea2c15" />
 
 Navigating to register and creating an account works, lets make one. 
 
-<12. visiting register>
+<img width="1276" height="335" alt="12  visiting register" src="https://github.com/user-attachments/assets/62921130-36f9-46fa-bdc8-9ad3063ed6f4" />
 
 Let's log in and then navigate to /blog to see if we can make a post now. 
 
@@ -168,17 +168,17 @@ http://<server>/blog.php
 ```
 Looks like our comment was successfully sent. 
 
-<13. blog comment >
+<img width="171" height="60" alt="13  testing blog comment" src="https://github.com/user-attachments/assets/f889f48f-9e19-4eb6-b5f4-b9a2e8cc4657" />
 
 Let's see if it sanitizes comments by sending in a very simple XSS script, if successful this should prompt a alert on our screen in a notifcation box. 
 
-<14. testing for XSS vulnerability>
+<img width="450" height="128" alt="14  testing for xss vulnerability" src="https://github.com/user-attachments/assets/324f199c-e059-48f3-b1fb-d4ab22ee76af" />
 
 Refreshed the page and nothing showed, even though the comment was successfully sent. 
 But what if we create a user account with a XSS script? I wonder if the register page handles any input sanitization. 
 Using the same alert script, we register for an account and looks like its vulnerable. 
 
-<15. registered for an account>
+<img width="426" height="137" alt="15  registered for account with xss alert" src="https://github.com/user-attachments/assets/ee105205-425a-4f88-8766-e238a477d574" />
 
 Now we know that it's possible to expoit the register page we can deliver a payload. 
 But first we need to make a javascript to grab the data we're looking for.
@@ -212,7 +212,7 @@ If everything went accordingly, we should see that we extracted pass.txt
 
 Let's quickly decode it by running it through URL decoder.
 
-<23. url decoded>
+<img width="318" height="71" alt="23  url decoded on website" src="https://github.com/user-attachments/assets/9a7a65e7-c679-4059-9dd7-6e1787c680b7" />
 
 With that we should be able to FTP into jack's account.
 
@@ -239,7 +239,9 @@ ftp> get user.txt
 33 bytes received in 0.0006 seconds (52.3191 kbytes/s)
 ftp>
 ```
-In the snippet above I exracted the user.txt and we get our first flag.
+In the snippet above I extracted the user.txt and we get our first flag.
+
+<img width="586" height="60" alt="2  user flag" src="https://github.com/user-attachments/assets/cda67473-946f-4305-bae5-e9d0f4982a30" />
 
 Swap from ftp and ssh using the same credentials, but we need to find what permission jack has on the system.
 Running the command:
@@ -249,7 +251,7 @@ sudo -l
 ```
 In the image below we can see that jack has permissions to '/usr/sbin/iptables'
 
-<27. checking sudo permissions>
+<img width="945" height="508" alt="27  checking sudo permissions" src="https://github.com/user-attachments/assets/479ced09-3abf-44d9-a1f8-3bff4c106d0b" />
 
 After some more poking around under the directory:
 
@@ -263,7 +265,7 @@ jack@ubuntu:/opt$ Hey guys, after the hack some files have been placed in /usr/l
 Okay there's another hint for us. 
 Let's check cgi-bin. Look's like that folder is owned by root and a user named h4ck3d.
 
-<29. cgi-bin permissions>
+<img width="427" height="21" alt="29  file permissions for cgi-bin" src="https://github.com/user-attachments/assets/4d179b1a-4d76-4f97-be53-c170c4cea3f0" />
 
 In the meantime, let's take a look at the capture.pcap that was given to us as well, we'll extract it using:
 
@@ -272,7 +274,7 @@ scp jack@<server>:/opt/capture.pcap /home/<user>/Downloads
 ```
 We can see that the pcap file has encrypted data.
 
-<3. encrypted pcap>
+<img width="1546" height="195" alt="3  pcap encrypted" src="https://github.com/user-attachments/assets/cd6c5672-97ce-4b21-a9ef-621369d726d5" />
 
 We can grab the key to decrypt this if we extract the apache.key typically stored here:
 
@@ -281,17 +283,14 @@ scp jack@<server>:/etc/apache2/certs/apache.key /home/<user>/Downloads
 ```
 Navigate back to wireshark and then were going to go to:
 
-```bash
-
 preferences => RSA Key => Add new keyfile =>
 
-<34. rsa image>
+<img width="1138" height="237" alt="34  RSA keylist" src="https://github.com/user-attachments/assets/4550c305-1a23-489e-9735-910883022b29" />
 
 Now we can see the traffic in cleartext, let's filter wireshark using this 'tcp.port == 41312 && http'
 We know it's port 41312 based on the iptables that we saw earlier.
 
-<35. decrypted wireshark traffic>
-
+<img width="1572" height="279" alt="35  decrypted http traffic exposing backdoor" src="https://github.com/user-attachments/assets/dfcc704c-66cb-43c4-82ab-f3af8b2c7236" />
 
 It look's like they have been using a backdoor to gain access to the server, clearly the hackers still have a way in. Let's see if we can use and follow their footprints.
 Let's create permissions on the iptables so it accepts connections.
@@ -316,11 +315,11 @@ DROP     tcp    --     anywhere      anywhere               tcp dpt:41312
 ```
 Below we can see the web address for the backdoor long with the group ID's that the folder beloongs to.
 
-<38. group id>
+<img width="700" height="311" alt="38  grabbing group ID" src="https://github.com/user-attachments/assets/8e5e4ee6-5192-4264-acaf-ddb003a58e6f" />
 
 Now that we can successfully connect we can inject a url encoded payload to get a shell.
 
-<38. url encoded payload>
+<img width="690" height="88" alt="39  creating a url encoded payload" src="https://github.com/user-attachments/assets/c87fe15e-eb2f-4f15-9495-8e92381b0f45" />
 
 Make sure you have your listener started before you connect:
 
